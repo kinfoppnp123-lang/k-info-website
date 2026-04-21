@@ -7,6 +7,8 @@ const newsData = [
     id: 1,
     title: "K-Info Meluncurkan Platform Komunikasi Baru",
     date: "20 April 2024",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop&crop=center",
     description:
       "Unit K-Info telah meluncurkan platform komunikasi terpadu untuk meningkatkan transparansi dan efisiensi penyebaran informasi kepada semua stakeholder.",
     content:
@@ -16,6 +18,8 @@ const newsData = [
     id: 2,
     title: "Seminar Komunikasi Efektif Diadakan Dengan Sukses",
     date: "15 April 2024",
+    image:
+      "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=250&fit=crop&crop=center",
     description:
       "Lebih dari 150 peserta menghadiri seminar tentang strategi komunikasi efektif yang diselenggarakan oleh K-Info bersama dengan para ahli industri.",
     content:
@@ -25,6 +29,8 @@ const newsData = [
     id: 3,
     title: "Pengumuman: Jadwal Libur Nasional dan Cuti Bersama",
     date: "10 April 2024",
+    image:
+      "https://images.unsplash.com/photo-1486312338219-ce68e2c6f44d?w=400&h=250&fit=crop&crop=center",
     description:
       "K-Info mengumumkan jadwal libur nasional dan cuti bersama untuk tahun 2024. Informasi lengkap tersedia untuk perencanaan kegiatan organisasi.",
     content:
@@ -34,6 +40,8 @@ const newsData = [
     id: 4,
     title: "Workshop Jurnalisme Digital dan Content Creation",
     date: "5 April 2024",
+    image:
+      "https://images.unsplash.com/photo-1551818255-eab1a63ddc4d?w=400&h=250&fit=crop&crop=center",
     description:
       "K-Info menyelenggarakan workshop intensif tentang jurnalisme digital dan pembuatan konten berkualitas untuk era media sosial modern.",
     content:
@@ -43,6 +51,8 @@ const newsData = [
     id: 5,
     title: "Update Kebijakan Komunikasi Internal Organisasi",
     date: "1 April 2024",
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop&crop=center",
     description:
       "Kebijakan komunikasi internal organisasi telah diperbarui untuk meningkatkan alur informasi dan efisiensi koordinasi antar departemen.",
     content:
@@ -52,6 +62,8 @@ const newsData = [
     id: 6,
     title: "Penghargaan untuk Tim K-Info dari Manajemen Puncak",
     date: "25 Maret 2024",
+    image:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop&crop=center",
     description:
       "Tim K-Info menerima penghargaan apresiasi dari manajemen puncak atas dedikasi dan kontribusi luar biasa dalam meningkatkan komunikasi organisasi.",
     content:
@@ -63,14 +75,7 @@ const newsData = [
 // DOM ELEMENTS
 // ===========================
 
-const navLinks = document.querySelectorAll(".nav-link");
-const footerLinks = document.querySelectorAll(".footer-link");
-const pages = document.querySelectorAll(".page");
 const newsGrid = document.getElementById("newsGrid");
-const detailModal = document.getElementById("detailModal");
-const modalClose = document.querySelector(".modal-close");
-const modalBody = document.getElementById("modalBody");
-const contactForm = document.querySelector(".contact-form form");
 
 // ===========================
 // FUNCTIONS
@@ -81,21 +86,22 @@ function renderNews() {
   newsGrid.innerHTML = "";
   newsData.forEach((news) => {
     const newsCard = document.createElement("div");
-    newsCard.className = "news-card";
+    newsCard.className = "col-lg-4 col-md-6 mb-4";
     newsCard.innerHTML = `
-            <div class="news-card-header">
-                <span class="news-date">${news.date}</span>
-                <h3>${news.title}</h3>
-            </div>
-            <div class="news-card-body">
-                <p class="news-description">${news.description}</p>
-                <div class="news-card-footer">
-                    <button class="btn btn-primary" onclick="openDetailModal(${news.id})">
-                        Baca Selengkapnya
-                    </button>
-                </div>
-            </div>
-        `;
+      <div class="card h-100 shadow-sm">
+        <img src="${news.image}" class="card-img-top" alt="${news.title}" style="height: 200px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <small class="text-muted">${news.date}</small>
+          </div>
+          <h5 class="card-title">${news.title}</h5>
+          <p class="card-text flex-grow-1">${news.description}</p>
+          <button class="btn btn-primary mt-auto" data-bs-toggle="modal" data-bs-target="#detailModal" onclick="openDetailModal(${news.id})">
+            Baca Selengkapnya
+          </button>
+        </div>
+      </div>
+    `;
     newsGrid.appendChild(newsCard);
   });
 }
@@ -104,123 +110,38 @@ function renderNews() {
 function openDetailModal(newsId) {
   const news = newsData.find((n) => n.id === newsId);
   if (news) {
+    const modalTitle = document.getElementById("detailModalLabel");
+    const modalBody = document.getElementById("modalBody");
+
+    modalTitle.innerHTML = `
+      <small class="text-muted">${news.date}</small>
+      <br>
+      ${news.title}
+    `;
+
     modalBody.innerHTML = `
-            <span class="modal-date">${news.date}</span>
-            <h2 class="modal-title">${news.title}</h2>
-            <div class="modal-body">
-                ${news.content
-                  .split("\n")
-                  .map((paragraph) => {
-                    if (paragraph.trim()) {
-                      return `<p>${paragraph}</p>`;
-                    }
-                    return "";
-                  })
-                  .join("")}
-            </div>
-        `;
-    detailModal.classList.add("active");
-    document.body.style.overflow = "hidden";
+      <img src="${news.image}" class="img-fluid rounded mb-3" alt="${news.title}">
+      ${news.content
+        .split("\n")
+        .map((paragraph) => {
+          if (paragraph.trim()) {
+            return `<p>${paragraph}</p>`;
+          }
+          return "";
+        })
+        .join("")}
+    `;
   }
 }
 
 // Close modal
-function closeDetailModal() {
-  detailModal.classList.remove("active");
-  document.body.style.overflow = "auto";
-}
-
-// Navigate to page
-function navigateTo(pageName) {
-  // Hide all pages
-  pages.forEach((page) => {
-    page.classList.remove("active");
-  });
-
-  // Show selected page
-  const targetPage = document.getElementById(pageName);
-  if (targetPage) {
-    targetPage.classList.add("active");
-  }
-
-  // Update active nav link
-  navLinks.forEach((link) => {
-    link.classList.remove("active");
-    if (link.getAttribute("data-page") === pageName) {
-      link.classList.add("active");
-    }
-  });
-
-  // Scroll to top
-  window.scrollTo(0, 0);
-}
+// Note: Bootstrap modal handles closing automatically
 
 // ===========================
 // EVENT LISTENERS
 // ===========================
 
-// Navigation menu
-navLinks.forEach((link) => {
-  link.addEventListener("click", (e) => {
-    e.preventDefault();
-    const pageName = link.getAttribute("data-page");
-    navigateTo(pageName);
-  });
-});
-
-// Footer links
-footerLinks.forEach((link) => {
-  link.addEventListener("click", (e) => {
-    e.preventDefault();
-    const pageName = link.getAttribute("data-page");
-    navigateTo(pageName);
-  });
-});
-
-// Modal close button
-modalClose.addEventListener("click", closeDetailModal);
-
-// Close modal when clicking outside
-detailModal.addEventListener("click", (e) => {
-  if (e.target === detailModal) {
-    closeDetailModal();
-  }
-});
-
-// Close modal with Escape key
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeDetailModal();
-  }
-});
-
-// Contact form submission
-if (contactForm) {
-  contactForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // Get form values
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const subject = document.getElementById("subject").value;
-    const message = document.getElementById("message").value;
-
-    // In a real application, you would send this data to a server
-    // For now, we'll show a success message
-    alert(
-      `Terima kasih ${name}! Pesan Anda telah dikirim. Kami akan menghubungi Anda di ${email} segera.`,
-    );
-
-    // Reset form
-    contactForm.reset();
-  });
-}
-
-// ===========================
-// INITIALIZATION
-// ===========================
-
-document.addEventListener("DOMContentLoaded", () => {
+// Initialize when DOM is loaded
+document.addEventListener("DOMContentLoaded", function () {
   renderNews();
-  navigateTo("home");
 });
